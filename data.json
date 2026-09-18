@@ -1,0 +1,154 @@
+
+{
+  "corpora": {
+    "shakespeare": {
+      "label": "Shakespeare Plays (Classic IR Textbook Example)",
+      "documents": {
+        "Antony and Cleopatra": "Antony and Cleopatra fought many battles together. Brutus killed himself after losing the battle at Philippi.",
+        "Julius Caesar": "Brutus and Cassius conspired against Caesar. Antony delivered a famous funeral oration in honor of Caesar.",
+        "The Tempest": "Prospero used his magic to control the storm and command the island's spirits.",
+        "Hamlet": "Hamlet doubted everyone including Claudius and delayed his revenge for his father's murder.",
+        "Othello": "Othello was manipulated by Iago into believing that Desdemona had been unfaithful.",
+        "Macbeth": "Macbeth and Lady Macbeth conspired together to murder King Duncan and seize the throne."
+      }
+    },
+    "programming": {
+      "label": "Programming Languages (General Corpus)",
+      "documents": {
+        "Doc1": "Python is a popular programming language used widely for data science and machine learning.",
+        "Doc2": "Java is a widely used programming language for enterprise applications and Android development.",
+        "Doc3": "C plus plus provides low level memory control and high performance for system programming.",
+        "Doc4": "Python and Java are both object oriented programming languages with large developer communities."
+      }
+    },
+    "ir_intro": {
+      "label": "Information Retrieval Basics",
+      "documents": {
+        "Doc1": "Information retrieval is the process of obtaining information resources relevant to an information need from a large collection.",
+        "Doc2": "A query does not uniquely identify a single document since several documents may match the query with varying degrees of relevance.",
+        "Doc3": "The inverted index is a central data structure of a typical search engine indexing algorithm.",
+        "Doc4": "The goal of indexing is to optimize the speed and performance of finding relevant documents for a search query.",
+        "Doc5": "A web crawler collects pages from the web and the indexer builds an inverted index to enable fast full text search."
+      }
+    }
+  },
+  "stopwords": [
+    "a", "an", "the", "is", "are", "was", "were", "be", "been", "being",
+    "and", "or", "but", "if", "of", "to", "in", "on", "at", "by", "for",
+    "with", "as", "that", "this", "it", "its", "from", "into", "than",
+    "then", "so", "such", "not", "no", "do", "does", "did", "has", "have",
+    "had", "his", "her", "their", "both", "each", "many", "several"
+  ],
+  "quiz": [
+    {
+      "question": "What is an inverted index?",
+      "options": [
+        "A data structure that maps each document to the list of terms it contains",
+        "A data structure that maps each term to the list of documents (and occurrences) in which it appears",
+        "A sorted list of all documents in a collection",
+        "A hash table of document titles only"
+      ],
+      "answer": 1,
+      "explanation": "An inverted index inverts the natural document-to-terms mapping: it maps each term in the vocabulary to a postings list of the documents (and often positions) where that term occurs, enabling fast keyword lookup."
+    },
+    {
+      "question": "What is a 'postings list' in the context of an inverted index?",
+      "options": [
+        "The list of documents (with occurrence data) associated with a given term",
+        "The list of all stopwords removed during preprocessing",
+        "A list of synonyms for a term",
+        "The list of unique terms in a single document"
+      ],
+      "answer": 0,
+      "explanation": "For each term in the vocabulary, the inverted index stores a postings list: the set of document IDs (often with term frequency or positions) in which that term occurs."
+    },
+    {
+      "question": "What is the 'vocabulary' (or dictionary) of an inverted index?",
+      "options": [
+        "The set of stopwords removed from the corpus",
+        "The set of all documents in the corpus",
+        "The set of all distinct terms extracted from the document collection",
+        "The set of grammatical rules used for stemming"
+      ],
+      "answer": 2,
+      "explanation": "The vocabulary (dictionary) is the set of unique terms across the entire collection; it forms the set of keys in the inverted index."
+    },
+    {
+      "question": "What does Term Frequency (TF) measure?",
+      "options": [
+        "The number of documents that contain a given term",
+        "The number of times a given term occurs within a specific document",
+        "The total number of terms in the vocabulary",
+        "The number of queries that used the term"
+      ],
+      "answer": 1,
+      "explanation": "Term frequency (TF) is the count of occurrences of a term within one specific document, used to weigh how important that term is to that document."
+    },
+    {
+      "question": "What does Document Frequency (DF) measure?",
+      "options": [
+        "The number of times a term appears in a single document",
+        "The total number of documents in the collection",
+        "The number of documents in the collection that contain a given term at least once",
+        "The number of unique terms in a document"
+      ],
+      "answer": 2,
+      "explanation": "Document frequency (DF) counts how many distinct documents contain the term at least once; it is often used to compute inverse document frequency (IDF) for ranking."
+    },
+    {
+      "question": "Why is stopword removal commonly applied before building an inverted index?",
+      "options": [
+        "To increase the size of the postings lists",
+        "To remove very common, low-information words and reduce index size and noise",
+        "Because stopwords cannot be tokenized",
+        "To make the index case-sensitive"
+      ],
+      "answer": 1,
+      "explanation": "Stopwords (e.g., 'the', 'is', 'and') occur in almost every document and carry little discriminative value for retrieval, so removing them shrinks the index and can improve retrieval quality."
+    },
+    {
+      "question": "What is the purpose of stemming (or lemmatization) during index construction?",
+      "options": [
+        "To translate documents into another language",
+        "To group different inflected/derived forms of a word so they are indexed under a single term",
+        "To remove all numbers from the text",
+        "To sort documents alphabetically"
+      ],
+      "answer": 1,
+      "explanation": "Stemming/lemmatization reduces words like 'running', 'runs', and 'ran' to a common root form ('run'), so a query for one form can also retrieve documents containing related forms."
+    },
+    {
+      "question": "For the boolean query 'Brutus AND Caesar', which documents are returned?",
+      "options": [
+        "Documents containing either 'Brutus' or 'Caesar' or both",
+        "Documents containing 'Brutus' but not 'Caesar'",
+        "Documents containing both 'Brutus' and 'Caesar'",
+        "All documents in the collection"
+      ],
+      "answer": 2,
+      "explanation": "A boolean AND query requires the intersection of the postings lists of both terms, so only documents containing both 'Brutus' and 'Caesar' are returned."
+    },
+    {
+      "question": "What is the typical order of steps when constructing an inverted index?",
+      "options": [
+        "Build postings lists, then tokenize, then normalize",
+        "Tokenize the text, normalize tokens (case-folding/punctuation), optionally remove stopwords and stem, then build postings lists",
+        "Remove stopwords, then collect documents, then rank results",
+        "Sort documents by length, then assign document IDs, then stem"
+      ],
+      "answer": 1,
+      "explanation": "Standard index construction: collect documents -> tokenize -> normalize (lowercase, strip punctuation) -> optionally remove stopwords/stem -> accumulate (term, doc, frequency) postings -> sort/merge into the final index."
+    },
+    {
+      "question": "Compared to a forward index (document -> list of terms), why is an inverted index preferred for search engines?",
+      "options": [
+        "It uses less memory than any other data structure",
+        "It allows direct, fast lookup of the documents containing a query term instead of scanning every document",
+        "It removes the need for tokenization",
+        "It automatically ranks documents by relevance without any scoring"
+      ],
+      "answer": 1,
+      "explanation": "With an inverted index, answering a query only requires looking up the postings lists for the query terms, rather than scanning the entire collection as a forward index would require."
+    }
+  ]
+}
