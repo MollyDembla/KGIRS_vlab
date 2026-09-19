@@ -22,23 +22,27 @@ DATA = load_data()
 STOPWORDS = set(DATA["stopwords"])
 CORPORA = DATA["corpora"]
 QUIZ = DATA["quiz"]
+PRETEST = QUIZ[:5]
+POSTTEST = QUIZ[5:]
 
 if "trials" not in st.session_state:
     st.session_state.trials = []
-if "quiz_answers" not in st.session_state:
-    st.session_state.quiz_answers = {}
+if "pretest_answers" not in st.session_state:
+    st.session_state.pretest_answers = {}
+if "posttest_answers" not in st.session_state:
+    st.session_state.posttest_answers = {}
 
 st.sidebar.title("🔎 Inverted Index Lab")
 section = st.sidebar.radio(
     "Navigate",
-    ["Theory", "Simulation", "Quiz", "Report Generation"],
+    ["Aim", "Theory", "Procedure", "Simulation", "Pretest", "Posttest", "Report Generation"],
     label_visibility="collapsed",
 )
 
 # ---------------------------------------------------------------------------
-# THEORY
+# AIM
 # ---------------------------------------------------------------------------
-if section == "Theory":
+if section == "Aim":
     st.title("Construction of an Inverted Index")
 
     st.header("Aim")
@@ -48,7 +52,32 @@ if section == "Theory":
         "that supports efficient keyword retrieval."
     )
 
-    st.header("Background Theory")
+    st.header("Objectives")
+    objectives = [
+        "Understand the concept and structure of an inverted index.",
+        "Tokenize documents into individual terms.",
+        "Apply text normalization: case-folding, stopword removal, and stemming.",
+        "Map each term to the documents in which it occurs and record occurrence frequency.",
+        "Construct and inspect postings lists and the vocabulary (dictionary).",
+        "Perform keyword searches using boolean queries (AND / OR / NOT) over the constructed index.",
+        "Observe how an inverted index supports efficient document retrieval.",
+    ]
+    for i, obj in enumerate(objectives, 1):
+        st.write(f"**Objective {i}:** {obj}")
+
+    st.header("Expected Outcome")
+    st.success(
+        "A basic searchable index supporting efficient keyword retrieval, with the "
+        "ability to execute boolean queries and retrieve matching documents."
+    )
+
+# ---------------------------------------------------------------------------
+# THEORY
+# ---------------------------------------------------------------------------
+elif section == "Theory":
+    st.title("Theory")
+
+    st.header("Background")
     st.markdown(
         """
 An **inverted index** is the core data structure behind nearly every modern search
@@ -62,7 +91,24 @@ engine does not need to scan every document in the collection. It simply looks
 up the term in the index and retrieves its **postings list** — the set of
 documents (and occurrence data) already associated with that term.
 
-**Index construction pipeline:**
+### Example
+
+Suppose we have three documents:
+
+- **D1:** apple banana orange
+- **D2:** banana mango apple
+- **D3:** orange mango banana
+
+The inverted index contains:
+
+| Term | Posting List |
+|---|---|
+| apple | D1(1), D2(1) |
+| banana | D1(1), D2(1), D3(1) |
+| mango | D2(1), D3(1) |
+| orange | D1(1), D3(1) |
+
+### Index construction pipeline
 
 1. **Document collection** — gather the set of documents to be indexed, each
    assigned a unique document ID.
@@ -99,25 +145,10 @@ documents (and occurrence data) already associated with that term.
         "Stemming": "Reducing a word to an approximate root form by stripping suffixes.",
         "Boolean Query": "A query combining terms with AND, OR, and NOT operators over postings lists.",
     }
-    for term, definition in terms.items():
-        st.markdown(f"- **{term}** — {definition}")
-
-    st.header("Step-by-Step Procedure")
-    st.markdown(
-        """
-1. Select or enter a document collection.
-2. Choose preprocessing options: lowercasing, stopword removal, stemming.
-3. The lab tokenizes and normalizes every document automatically.
-4. For each surviving token, the term is added to the vocabulary and its
-   posting `(doc_id, frequency)` is recorded or updated.
-5. Inspect the resulting inverted index: vocabulary, postings lists, and
-   document frequencies.
-6. Issue a boolean query (e.g. `brutus AND caesar`, `caesar OR antony`,
-   `NOT caesar`) and observe which documents are retrieved by intersecting,
-   unioning, or complementing postings lists.
-7. Record trials to include in your final report.
-        """
+    terms_df = pd.DataFrame(
+        list(terms.items()), columns=["Term", "Definition"]
     )
+    st.table(terms_df)
 
     st.header("References")
     st.markdown(
@@ -130,6 +161,30 @@ documents (and occurrence data) already associated with that term.
    McGraw-Hill, 1983.
         """
     )
+
+# ---------------------------------------------------------------------------
+# PROCEDURE
+# ---------------------------------------------------------------------------
+elif section == "Procedure":
+    st.title("Experimental Procedure")
+
+    steps = [
+        "Step 1: Select or enter a document collection (corpus).",
+        "Step 2: Choose preprocessing options: lowercasing, stopword removal, stemming.",
+        "Step 3: Tokenize each document into individual terms.",
+        "Step 4: Convert terms to lowercase and remove unnecessary punctuation.",
+        "Step 5: Optionally remove stopwords and apply stemming to reduce terms to root forms.",
+        "Step 6: Count the occurrence of every term in each document.",
+        "Step 7: Construct the inverted index by mapping every term to its postings (doc_id, frequency).",
+        "Step 8: Observe the generated term dictionary and posting lists.",
+        "Step 9: Issue a boolean query (e.g. `brutus AND caesar`, `caesar OR antony`, `NOT caesar`).",
+        "Step 10: Retrieve the documents matching the query by intersecting, unioning, or complementing postings lists.",
+        "Step 11: Record the trial and observe the retrieval results.",
+        "Step 12: Complete the Pretest and Posttest quizzes.",
+        "Step 13: Generate and download the experiment report.",
+    ]
+    for step in steps:
+        st.write(f"- {step}")
 
 # ---------------------------------------------------------------------------
 # SIMULATION
@@ -215,7 +270,7 @@ elif section == "Simulation":
         "Use terms combined with AND / OR / NOT, e.g. `brutus AND caesar`, "
         "`caesar OR antony`, `NOT caesar`. Terms are matched against the index above."
     )
-    query = st.text_input("Query", value="")
+    query = st.text_input("Query", value="", key="query_input")
 
     all_doc_ids = set(documents.keys())
     matches, trace = ([], [])
@@ -250,28 +305,28 @@ elif section == "Simulation":
         st.caption(f"Trials recorded so far: {len(st.session_state.trials)}")
 
 # ---------------------------------------------------------------------------
-# QUIZ
+# PRETEST
 # ---------------------------------------------------------------------------
-elif section == "Quiz":
-    st.title("Quiz: Inverted Index Concepts")
-    st.caption("Answer each question below. Feedback is shown instantly.")
+elif section == "Pretest":
+    st.title("Pretest: Inverted Index Concepts")
+    st.caption("Answer each question below to test your prior understanding. Feedback is shown instantly.")
 
     correct_count = 0
     answered_count = 0
 
-    for i, q in enumerate(QUIZ):
+    for i, q in enumerate(PRETEST):
         st.markdown(f"**Q{i+1}. {q['question']}**")
         choice = st.radio(
-            f"q_{i}",
+            f"pretest_q_{i}",
             options=list(range(len(q["options"]))),
             format_func=lambda idx, opts=q["options"]: opts[idx],
             index=None,
-            key=f"quiz_radio_{i}",
+            key=f"pretest_radio_{i}",
             label_visibility="collapsed",
         )
         if choice is not None:
             answered_count += 1
-            st.session_state.quiz_answers[i] = choice
+            st.session_state.pretest_answers[i] = choice
             if choice == q["answer"]:
                 correct_count += 1
                 st.success(f"Correct! {q['explanation']}")
@@ -286,7 +341,52 @@ elif section == "Quiz":
     if answered_count > 0:
         pct = 100 * correct_count / answered_count
         st.metric("Correct", f"{correct_count} / {answered_count}", f"{pct:.1f}%")
-        st.session_state.quiz_score = {
+        st.session_state.pretest_score = {
+            "score": correct_count,
+            "total": answered_count,
+            "percent": pct,
+        }
+    else:
+        st.info("Answer at least one question to see your score.")
+
+# ---------------------------------------------------------------------------
+# POSTTEST
+# ---------------------------------------------------------------------------
+elif section == "Posttest":
+    st.title("Posttest: Inverted Index Concepts")
+    st.caption("Answer each question below to test what you learned from the simulation. Feedback is shown instantly.")
+
+    correct_count = 0
+    answered_count = 0
+
+    for i, q in enumerate(POSTTEST):
+        st.markdown(f"**Q{i+1}. {q['question']}**")
+        choice = st.radio(
+            f"posttest_q_{i}",
+            options=list(range(len(q["options"]))),
+            format_func=lambda idx, opts=q["options"]: opts[idx],
+            index=None,
+            key=f"posttest_radio_{i}",
+            label_visibility="collapsed",
+        )
+        if choice is not None:
+            answered_count += 1
+            st.session_state.posttest_answers[i] = choice
+            if choice == q["answer"]:
+                correct_count += 1
+                st.success(f"Correct! {q['explanation']}")
+            else:
+                st.error(
+                    f"Not quite. Correct answer: **{q['options'][q['answer']]}**. "
+                    f"{q['explanation']}"
+                )
+        st.divider()
+
+    st.subheader("Score")
+    if answered_count > 0:
+        pct = 100 * correct_count / answered_count
+        st.metric("Correct", f"{correct_count} / {answered_count}", f"{pct:.1f}%")
+        st.session_state.posttest_score = {
             "score": correct_count,
             "total": answered_count,
             "percent": pct,
@@ -329,12 +429,27 @@ elif section == "Report Generation":
             st.session_state.trials = []
             st.rerun()
 
-    quiz_result = st.session_state.get("quiz_score")
-    if quiz_result:
-        st.subheader("Quiz Result")
-        st.write(f"Score: {quiz_result['score']} / {quiz_result['total']} ({quiz_result['percent']:.1f}%)")
+    pretest_result = st.session_state.get("pretest_score")
+    posttest_result = st.session_state.get("posttest_score")
+
+    st.subheader("Quiz Results")
+    if pretest_result:
+        st.write(f"**Pretest:** {pretest_result['score']} / {pretest_result['total']} ({pretest_result['percent']:.1f}%)")
     else:
-        st.caption("No quiz attempted yet — complete the Quiz section to include your score in the report.")
+        st.caption("Pretest: Not attempted yet")
+
+    if posttest_result:
+        st.write(f"**Posttest:** {posttest_result['score']} / {posttest_result['total']} ({posttest_result['percent']:.1f}%)")
+    else:
+        st.caption("Posttest: Not attempted yet")
+
+    # Combine for PDF
+    quiz_result = None
+    if pretest_result or posttest_result:
+        quiz_result = {
+            "pretest": pretest_result,
+            "posttest": posttest_result,
+        }
 
     st.divider()
     if st.button("📄 Generate PDF Report", type="primary", disabled=not name or not roll):

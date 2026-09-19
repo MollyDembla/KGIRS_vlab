@@ -180,11 +180,23 @@ def generate_pdf_report(name: str, roll: str, trials: list, quiz_result: dict = 
             pdf.ln(2)
 
     if quiz_result is not None:
-        pdf.section_title("Quiz Result")
-        pdf.body_text(
-            f"Score: {quiz_result['score']} / {quiz_result['total']} "
-            f"({quiz_result['percent']:.1f}%)"
-        )
+        pdf.section_title("Quiz Results")
+        pretest = quiz_result.get("pretest")
+        posttest = quiz_result.get("posttest")
+        if pretest:
+            pdf.body_text(
+                f"Pretest Score: {pretest['score']} / {pretest['total']} "
+                f"({pretest['percent']:.1f}%)"
+            )
+        else:
+            pdf.body_text("Pretest: Not attempted")
+        if posttest:
+            pdf.body_text(
+                f"Posttest Score: {posttest['score']} / {posttest['total']} "
+                f"({posttest['percent']:.1f}%)"
+            )
+        else:
+            pdf.body_text("Posttest: Not attempted")
         pdf.ln(2)
 
     pdf.section_title("References")
